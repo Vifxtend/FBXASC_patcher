@@ -1,0 +1,59 @@
+
+
+// function to catch all bad codes and return in array
+global proc string[] get_bad(string $char) {
+
+	string $FBX_SPECIAL[25] = {"FBXASC033", "FBXASC064", "FBXASC035", "FBXASC036", "FBXASC037",
+						  	   "FBXASC094", "FBXASC092", "FBXASC038", "FBXASC042", "FBXASC040",
+						       "FBXASC041", "FBXASC046", "FBXASC047", "FBXASC044", "FBXASC124",
+						       "FBXASC034", "FBXASC058", "FBXASC059", "FBXASC093", "FBXASC091",
+						       "FBXASC043", "FBXASC061", "FBXASC045", "FBXASC060", "FBXASC062",
+						       "FBXASC032"}; // 25
+
+    string $bad_codes[];
+	for ($i = 0; $i < size($FBX_SPECIAL); $i++) {
+		if (`match $FBX_SPECIAL[$i] $char` == $FBX_SPECIAL[$i]) {
+			stringArrayInsertAtIndex($i, $bad_codes, $FBX_SPECIAL[$i]);
+		}
+	}
+	
+	return $bad_codes;
+}
+
+
+
+// entry point
+global proc run_batch_rename() {
+    string $nodes[] = `ls -ni`;
+    
+    for ($i = 0; $i < size($nodes); $i++) {
+        int $bad_size = size(get_bad($nodes[$i]));
+      	string $node_name = $nodes[$i];
+
+    undoInfo -ock;
+
+        if ($bad_size > 0) {
+
+          	int $safe_break = 0;
+          	while ($bad_size > 0 && $safe_break < 20) {
+          	    string $bad_code[0] = get_bad($node_name);
+          		string $name_buffer;
+    
+          		$name_buffer = `substitute $bad_code[0] $node_name "_"`;
+          		$node_name = $name_buffer;
+    
+          		$bad_size = size(get_bad($nodes[$i]));
+          		$safe_break += 1;
+    
+          	}
+          	
+     		rename($nodes[$i], $node_name);
+     	}
+
+     undoInfo -cck;
+
+    }
+    
+}
+
+run_batch_rename();
