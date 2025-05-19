@@ -4,7 +4,9 @@
 
 
 # How to Use
-Download the repository and open the folder that match to your software, there will be a ```.py``` script that you need to execute in scene.
+1. Download the repository.
+2. Open the folder that matches your software.
+3. There will be a ```.py``` script that you need to execute in the scene.
 
 # Example
 ![maya_fbxasc_example](https://github.com/Vifxtend/FBXASC_patcher/assets/127596557/974c678e-0ae5-414d-b878-15370a29529b)
